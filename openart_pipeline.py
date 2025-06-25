@@ -98,6 +98,8 @@ def generate_click(openart_pipeline_ui):
         current_total_progress = ((index+1) / len(excel_paths)) * 100
         openart_pipeline_ui.set_total_progress(current_total_progress)
 
+    openart_pipeline_ui.set_status('GENERATED')
+
 
 def generate_image_set(openart, image_prompts, openart_pipeline_ui, image_set_index, output_folder):
 
@@ -238,40 +240,47 @@ class OpenArtPipelineUI:
 
         back_to_start_button = tk.Button(self.login_layout, text="Back To Start", command=lambda: self.update_layout("START"))
         back_to_start_button.pack(pady=10)
-        open_browser_button = tk.Button(self.login_layout, text="Open Browser", command=lambda: self.open_chrome)
+        open_browser_button = tk.Button(self.login_layout, text="Open Browser", command=self.open_chrome)
         open_browser_button.pack(pady=10)
-        save_cookies_button = tk.Button(self.login_layout, text="Save Cookies and Close Browser", command=lambda: self.save_cookies_and_close_chrome)
+        save_cookies_button = tk.Button(self.login_layout, text="Save Cookies and Close Browser", command=self.save_cookies_and_close_chrome)
         save_cookies_button.pack(pady=10)
 
         self.update_layout('START')
 
+    @threaded_catch_exceptions
     def browse_folder(self):
         folder_path = filedialog.askdirectory()
         if folder_path:
             self.folder_path.set(folder_path)
 
+    @threaded_catch_exceptions
     def browse_download_folder(self):
         folder_path = filedialog.askdirectory()
         if folder_path:
             self.download_folder_path.set(folder_path)
 
+    @threaded_catch_exceptions
     def start_generation(self):
         # Update to generating layout
         self.update_layout("GENERATING")
 
         generate_click(self)
 
+    @threaded_catch_exceptions
     def login_click(self):
         self.update_layout("LOGIN")
 
+    @threaded_catch_exceptions
     def open_chrome(self):
         self.cookies_openart.initialize_driver()
         self.cookies_openart.navigate_to_website('https://openart.ai/create')
 
+    @threaded_catch_exceptions
     def save_cookies_and_close_browser(self):
         self.cookies_openart.save_cookies()
         self.cookies_openart.close()
 
+    @threaded_catch_exceptions
     def update_layout(self, state):
         self.start.pack_forget()
         self.generating_layout.pack_forget()
@@ -290,16 +299,19 @@ class OpenArtPipelineUI:
         elif state == 'LOGIN':
             self.login_layout.pack()
 
+    @threaded_catch_exceptions
     def set_status(self, message):
         """Updates the status label in the generating layout."""
         self.status_label.config(text=message)
         self.status_label.update_idletasks()
 
+    @threaded_catch_exceptions
     def set_current_progress(self, value):
         """Sets progress value for the current image set (0-100)."""
         self.progress_current['value'] = value
         self.progress_current.update_idletasks()
 
+    @threaded_catch_exceptions
     def set_total_progress(self, value):
         """Sets progress value for overall image sets (0-100)."""
         self.progress_total['value'] = value
