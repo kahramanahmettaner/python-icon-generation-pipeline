@@ -276,7 +276,7 @@ class OpenArtPipelineUI:
         self.cookies_openart.navigate_to_website('https://openart.ai/create')
 
     @threaded_catch_exceptions
-    def save_cookies_and_close_browser(self):
+    def save_cookies_and_close_chrome(self):
         self.cookies_openart.save_cookies()
         self.cookies_openart.close()
 
